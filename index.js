@@ -72,7 +72,7 @@ async function getItemDetails(basePath, items) {
         itemDetails.push({
             name: item,
             type: isFile ? 'file' : 'folder',
-            path: itemPath.replace(`F:\\Local Cloud Server\\${rootFolder}\\`, '').replace(`F:\\${rootFolder}\\`, '').replace('#', '%23')
+            path: itemPath.replace(`${__dirname}\\${rootFolder}\\`, '').replace(`${basePath}\\`, '').replace('#', '%23').toLowerCase()
         });
     }
     return itemDetails;
