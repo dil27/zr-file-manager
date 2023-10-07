@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Cloud Server</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-contents navbar-logo"><a href="/">ZR Cloud</a></div>
+            <div class="navbar-contents user-name">Fhadilah M</div>
+        </div>
+    </nav>
+    <main class="content" style="display: block;">
+        <p>File Location: <b id="filePath"><%= filePath %></b></p>
+        <div class="main-content">
+        </div>
+        <div class="content-details">
+            <div class="download-file">Download File</div>
+            <table class="content-detail-table">
+                <tr>
+                    <td>File Name</td>
+                    <td>:</td>
+                    <td id="detail-filename"></td>
+                </tr>
+                <tr>
+                    <td>File Size</td>
+                    <td>:</td>
+                    <td id="detail-filesize"></td>
+                </tr>
+                <tr>
+                    <td>File Location</td>
+                    <td>:</td>
+                    <td id="detail-filelocation"></td>
+                </tr>
+            </table>
+        </div>
+    </main>
+</body>
+<script src="/assets/js/jquery-3.6.0.min.js"></script>
+<script>
+    const videoExtensions = ['webm', 'mkv', 'flv', 'flv', 'vob', 'ogv', 'ogg', 'drc', 'gif', 'gifv', 'mng', 'avi', 'MTS', 'M2TS', 'TS', 'mov', 'qt', 'wmv', 'yuv', 'rm', 'rmvb', 'viv', 'asf', 'amv', 'mp4', 'm4p', 'm4v', 'mpg', 'mp2', 'mpeg', 'mpe', 'mpv', 'mpg', 'mpeg', 'm2v', 'm4v', 'svi', '3gp', '3g2', 'mxf', 'roq', 'nsv', 'flv', 'f4v', 'f4p', 'f4a', 'f4b'];
+    const audioExtensions = ['3gp', 'aa', 'aac', 'aax', 'act', 'aiff', 'alac', 'amr', 'ape', 'au', 'awb', 'dss', 'dvf', 'flac', 'gsm', 'iklax', 'ivs', 'm4a', 'm4b', 'm4p', 'mmf', 'movpkg', 'mp3', 'mpc', 'msv', 'nmf', 'ogg', 'oga', 'mogg', 'opus', 'ra', 'rm', 'raw', 'rf64', 'sln', 'tta', 'voc', 'vox', 'wav', 'wma', 'wv', 'webm', '8svx', 'cda'];
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'webp', 'svg', 'ico', 'tga', 'raw', 'exr', 'hdr', 'ppm', 'pgm', 'wbmp', 'pcx', 'pnm', 'xbm', 'iff', 'xpm', 'dds', 'jng', 'sgi', 'pic'];
+    let mediaUrl = false;
+
+    var filePath = $('#filePath').text();
+
+    var virtualPath = filePath.split('\\');
+        virtualPath.shift();
+        virtualPath.pop();
+
+    var fileName = filePath.split('\\');
+        fileName = fileName[fileName.length - 1];
+
+    var ext = fileName.split('.');
+        ext = ext[ext.length - 1];
+    
+    var newVirtualPath = '';
+    var writtenPath = '';
+    virtualPath.forEach((path, index) => {
+        if (index != 1) {
+            if (index == 0) {
+                writtenPath = '';
+                newVirtualPath += `<a class="virtualPath" href="/">${path}</a>`;
+            } else {
+                writtenPath += `/${path}`;
+                newVirtualPath += ` › <a class="virtualPath" href="${writtenPath}">${path}</a>`
+            }
+        }
+    });
+
+    var mediaType;
+    if (videoExtensions.includes(ext)) {
+        mediaType = 'video';
+        var _thisPath = window.location.pathname.split('/');
+            _thisPath.pop();
+            _thisPath = _thisPath.join('/', _thisPath) + '/embed';
+
+        mediaUrl = _thisPath;
+        
+        getFileSizeAsync(_thisPath)
+
+        $('.main-content').append(`
+            <video class="zr-video-player" id="media" src="${_thisPath}"></video>
+            <div class="zr-video-player-controls">
+                <div class="touch-controller">
+                    <div class="touch-control" id="backward"><div class="player-icon backward"></div></div>
+                    <div class="touch-control" id="toggle"><div class="player-icon play"></div></div>
+                    <div class="touch-control" id="forward"><div class="player-icon forward"></div></div>
+                </div>
+                <div class="controller">
+                    <div class="control" id="control-toggle"><div class="control-icon play"></div></div>
+                    <div class="control" id="volume"><input type="range" id="rangeVolume" min="0" step="0.01" max="1" value="1"></div>
+                    <div class="control" id="seek"><input type="range" id="rangeSeeker" min="0" step="0.1" max="100" value="0"></div>
+                    <div class="control" id="fullscreen"><div class="control-icon fullscreen"></div></div>
+                </div>
+            </div>
+        `);
+    } else if (audioExtensions.includes(ext)) {
+        mediaType = 'audio';
+        var _thisPath = window.location.pathname.split('/');
+            _thisPath.pop();
+            _thisPath = _thisPath.join('/', _thisPath) + '/embed';
+
+        mediaUrl = _thisPath;
+
+        
+        getFileSizeAsync(_thisPath)
+
+        $('.main-content').append(`
+            <video class="zr-video-player" id="media" src="${_thisPath}" poster="/assets/img/favicon.png"></video>
+            <div class="zr-video-player-controls">
+                <div class="touch-controller">
+                    <div class="touch-control" id="backward"><div class="player-icon backward"></div></div>
+                    <div class="touch-control" id="toggle"><div class="player-icon play"></div></div>
+                    <div class="touch-control" id="forward"><div class="player-icon forward"></div></div>
+                </div>
+                <div class="controller">
+                    <div class="control" id="control-toggle"><div class="control-icon play"></div></div>
+                    <div class="control" id="volume"><input type="range" id="rangeVolume" min="0" step="0.01" max="1" value="1"></div>
+                    <div class="control" id="seek"><input type="range" id="rangeSeeker" min="0" step="0.1" max="100" value="0"></div>
+                    <div class="control" id="fullscreen"><div class="control-icon fullscreen"></div></div>
+                </div>
+            </div>
+        `);
+    } else if (imageExtensions.includes(ext)) {
+        mediaType = 'image';
+        var _thisPath = window.location.pathname.split('/');
+            _thisPath.pop();
+            _thisPath = _thisPath.join('/', _thisPath) + '/embed';
+
+        mediaUrl = _thisPath;
+
+        getFileSizeAsync(_thisPath)
+
+        $('.main-content').append(`
+            <img class="zr-image-viewer" id="media" src="${_thisPath}" style="object-fit: contain">
+            <a class="zr-image-viewer-controls" href="${_thisPath}" target="_blank">Open in new tab</a>
+        `);
+    } else {
+        var _thisPath = window.location.pathname.split('/');
+        _thisPath.pop();
+        _thisPath = _thisPath.join('/', _thisPath) + '/embed';
+
+        mediaUrl = _thisPath;
+
+        getFileSizeAsync(_thisPath)
+        if (ext == 'txt') {
+            media = 'text';
+            try {
+                fetch(_thisPath)
+                .then(response => response.text())
+                .then(data => {
+                    text = data
+                    $('.main-content').append(`
+                        <pre>${data}</pre>
+                    `).css('padding', '10px').css('overflow', 'auto');
+                });
+            } catch (err) {
+                    $('.main-content').append(`
+                        <pre>${err}</pre>
+                    `).css('padding', '10px').css('overflow', 'auto');
+            }
+        } else {
+            mediaType = false;
+            var _thisPath = window.location.pathname.split('/');
+            _thisPath.pop();
+            _thisPath = _thisPath.join('/', _thisPath) + '/embed';
+
+            mediaUrl = _thisPath;
+            getFileSizeAsync(_thisPath)
+
+            $('.main-content').append(`
+                Cannot open file
+            `).css('display', 'flex').css('justify-content', 'center').css('align-items', 'center');
+        }
+    }
+    
+    $('#filePath').html(newVirtualPath);
+    $('#detail-filename').text(`${fileName}`);
+    $('#detail-filelocation').text(`Local Cloud Server${writtenPath}/${fileName}`);
+    // $('#filePath').text(virtualPath);
+    // console.log(virtualPath);
+
+    // Init Player
+    if (media) {
+        var player = $('#media')
+    }
+
+    // Init Controls for Desktop
+    $(document).on('dblclick', '#forward', (e) => {
+        forwardMedia();
+    });
+    $(document).on('dblclick', '#backward', (e) => {
+        backwardMedia();
+    });
+    $(document).on('click', '#toggle', (e) => {
+        toggleMedia();
+    });
+
+    // Init Controls for Touch
+    var tapped = false;
+    $(document).on('touchstart', '#forward', (e) => {
+        if (!tapped) {
+            tapped = setTimeout(() => {
+                tapped = null;
+                // nothing
+            }, 100)
+        } else {
+            clearTimeout(tapped);
+            tapped = null;
+            forwardMedia();
+        }
+    });
+
+    $(document).on('touchstart', '#backward', (e) => {
+        if (!tapped) {
+            tapped = setTimeout(() => {
+                tapped = null;
+                // nothing
+            }, 100)
+        } else {
+            clearTimeout(tapped);
+            tapped = null;
+            backwardMedia();
+        }
+    });
+
+    // Init Controller Universal
+    $(document).on('click', '#fullscreen', () => {
+        var mediaElement = $('#media')[0];
+        // Memeriksa apakah elemen media mendukung fitur Fullscreen API
+        if (mediaElement.requestFullscreen) {
+        mediaElement.requestFullscreen();
+        } else if (mediaElement.mozRequestFullScreen) { // Firefox
+        mediaElement.mozRequestFullScreen();
+        } else if (mediaElement.webkitRequestFullscreen) { // Chrome, Safari, dan Opera
+        mediaElement.webkitRequestFullscreen();
+        } else if (mediaElement.msRequestFullscreen) { // Internet Explorer/Edge
+        mediaElement.msRequestFullscreen();
+        } else {
+        console.log('Browser tidak mendukung fitur fullscreen.');
+        }
+    });
+
+    $(document).on('click', '#control-toggle', function() {
+        toggleMedia()
+    });
+
+    var storeVolume = 1;
+    $(document).on('input', '#rangeSeeker', function() {
+        if (media) {
+
+            var crTime = $('#rangeSeeker').val() * media.duration / 100
+            if (media.paused) {
+                media.volume = 0;
+                media.play();
+                setTimeout(() => {
+                    media.currentTime = crTime;
+                    media.pause()
+                    media.volume = storeVolume;
+                }, 10);
+            } else {
+                media.currentTime = crTime;
+            }
+        }
+    });
+
+    $(document).on('input', '#rangeVolume', function() {
+        if (media) {
+            media.volume = $('#rangeVolume').val();
+            storeVolume = media.volume
+        }
+    });
+
+    if (media) {
+        $(media).on('timeupdate', () => {
+            $('#rangeSeeker').val(media.currentTime / media.duration * 100);
+            if (media.currentTime == media.duration) {
+                media.currentTime = 0;
+                media.play();
+                toggleMedia();
+            }
+        });
+    }
+
+    $('.download-file').on('click', () => {
+        if (mediaUrl) {
+            console.log(fileName);
+            var downloadLink = document.createElement('a');
+            downloadLink.href = mediaUrl;
+            downloadLink.download = fileName;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    })
+
+    function backwardMedia() {
+        if (media) {
+            media.currentTime -= 5;
+            $('#backward').animate({
+                opacity: 1
+            }, 50, () => {
+                setTimeout(() => {
+                    $('#backward').animate({
+                        opacity: 0
+                    }, 750);
+                }, 10)
+            })
+        }
+    }
+
+    function forwardMedia() {
+        if (media) {
+            media.currentTime += 5;
+            $('#forward').animate({
+                opacity: 1
+            }, 50, () => {
+                setTimeout(() => {
+                    $('#forward').animate({
+                        opacity: 0
+                    }, 750);
+                }, 10)
+            })
+        }
+    }
+
+    function toggleMedia() {
+        if (media) {
+            if (media.paused) {
+                media.play();
+                $('.player-icon.play').addClass('pause').removeClass('play');
+                $('.control-icon.play').addClass('pause').removeClass('play');
+                $('#toggle').animate({
+                    opacity: 0
+                }, 750);
+            } else {
+                media.pause();
+                $('.player-icon.pause').addClass('play').removeClass('pause');
+                $('.control-icon.pause').addClass('play').removeClass('pause');
+                $('#toggle').animate({
+                    opacity: 1
+                }, 50);
+            }
+        }
+    }
+
+    async function getFileSizeAsync(url) {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+
+            if (!response.ok) {
+                throw new Error('Gagal mengambil ukuran file.');
+            }
+
+            const fileSize = response.headers.get('Content-Length');
+            $('#detail-filesize').text(convertFileSize(fileSize));
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
+    function convertFileSize(size) {
+        var kb = size / 1024;
+        var mb = kb / 1024;
+        var gb = mb / 1024;
+
+        if (mb < 1) {
+            return kb.toFixed(2) + ` KB (${size} bytes)`;
+        } else {
+            if (gb < 1) {
+                return mb.toFixed(2) + ` MB (${size} bytes)`;
+            } else {
+                return gb.toFixed(2) + ` GB (${size} bytes)`;
+            }
+        }
+
+    }
+</script>
+</html>

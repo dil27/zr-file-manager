@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Cloud Server</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <ul class="tempListing" style="display: none;">
+        <% itemDetails.forEach(item => { %>
+        <li>
+            <% if (item.type === 'folder') { %>
+            <a class="tempdata" type="folder" href="/<%= item.path %>"><%= item.name %></a>
+            <% } else { %>
+            <a class="tempdata" type="file" href="/<%= item.path %>/view"><%= item.name %></a>
+            <% } %>
+        </li>
+        <% }); %>
+    </ul>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-contents navbar-logo"><a href="/">ZR Cloud</a></div>
+            <div class="navbar-contents user-name">Fhadilah M</div>
+        </div>
+    </nav>
+    <main class="content">
+
+    </main>
+</body>
+<script src="/assets/js/jquery-3.6.0.min.js"></script>
+<script>
+    let folders = [];
+    let files = [];
+
+    $.each($('a.tempdata'), (a, b) => {
+        var item = {
+            path: $(b).attr('href').replaceAll('\\', '/'),
+            name: $(b).text()
+        }
+        if ($(b).attr('type') == 'folder') {
+            folders.push(item)
+        } else {
+            files.push(item)
+        }
+    })
+    $('.tempListing').remove();
+    
+    var backUrl = window.location.pathname.split('/');
+        backUrl.pop()
+        backUrl = backUrl.join('/', backUrl);
+
+    if (backUrl.length == 0) {
+        backUrl = '/';
+    }
+
+    if (window.location.pathname.length > 1) {
+        $('.content').append(`
+            <a href="${backUrl}" class="file">
+                <div class="icon folder-up"></div>
+                <div class="item-name">Back</div>
+            </a>
+        `);
+    }
+
+    // Initialize Folders, Files, and Back
+
+    // Extensions List
+    const videoExtensions = ['webm', 'mkv', 'flv', 'flv', 'vob', 'ogv', 'ogg', 'drc', 'gif', 'gifv', 'mng', 'avi', 'MTS', 'M2TS', 'TS', 'mov', 'qt', 'wmv', 'yuv', 'rm', 'rmvb', 'viv', 'asf', 'amv', 'mp4', 'm4p', 'm4v', 'mpg', 'mp2', 'mpeg', 'mpe', 'mpv', 'mpg', 'mpeg', 'm2v', 'm4v', 'svi', '3gp', '3g2', 'mxf', 'roq', 'nsv', 'flv', 'f4v', 'f4p', 'f4a', 'f4b'];
+    const audioExtensions = ['3gp', 'aa', 'aac', 'aax', 'act', 'aiff', 'alac', 'amr', 'ape', 'au', 'awb', 'dss', 'dvf', 'flac', 'gsm', 'iklax', 'ivs', 'm4a', 'm4b', 'm4p', 'mmf', 'movpkg', 'mp3', 'mpc', 'msv', 'nmf', 'ogg', 'oga', 'mogg', 'opus', 'ra', 'rm', 'raw', 'rf64', 'sln', 'tta', 'voc', 'vox', 'wav', 'wma', 'wv', 'webm', '8svx', 'cda'];
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'webp', 'svg', 'ico', 'tga', 'raw', 'exr', 'hdr', 'ppm', 'pgm', 'wbmp', 'pcx', 'pnm', 'xbm', 'iff', 'xpm', 'dds', 'jng', 'sgi', 'pic'];
+    
+    folders.forEach(folder => {
+        $('.content').append(`
+            <a href="${folder.path}" class="file">
+                <div class="icon folder"></div>
+                <div class="item-name">${folder.name}</div>
+            </a>
+        `);
+    });
+    
+    files.forEach(file => {
+        var ext = file.name.split('.');
+            ext = ext[ext.length - 1].toLowerCase();
+
+        if (videoExtensions.includes(ext)) {
+            var fileType = 'video';
+        } else if (audioExtensions.includes(ext)) {
+            var fileType = 'audio';
+        } else if (imageExtensions.includes(ext)) {
+            var fileType = 'image';
+        } else {
+            var fileType = 'file';
+        }
+
+        $('.content').append(`
+            <a href="${file.path}" class="file">
+                <div class="icon ${fileType}"></div>
+                <div class="item-name">${file.name}</div>
+            </a>
+        `);
+    });
+
+    $(window).on('scroll', () => {
+        if ($(window).scrollTop() > 10) {
+            $('nav').css('height', 50);
+        } else {
+            $('nav').css('height', 70);
+        }
+    })
+</script>
+</html>

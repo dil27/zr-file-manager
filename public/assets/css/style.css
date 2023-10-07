@@ -1,0 +1,427 @@
+@font-face {
+    font-family: "A Year Without Rain";
+    src: url("../fonts/AYearWithoutRain.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Bold.ttf") format("truetype");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Italic.ttf") format("truetype");
+    font-weight: normal;
+    font-style: italic;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--bg-color);
+  outline: none;
+  opacity: 1;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 8px;
+  background: var(--card-color);
+  cursor: pointer; /* Cursor on hover */
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 8px;
+  background: var(--card-color);
+  cursor: pointer;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg-color: #2c3333;
+    --fg-color: #395b64;
+    --fg-color-hover: #4f7985;
+    --card-color: #a5c9ca;
+    --text-color: #e7f6f2;
+}
+
+body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: "Poppins";
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+nav.navbar {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    background: var(--fg-color);
+    height: 70px;
+    transition: height 0.3s ease;
+    z-index: 99;
+    box-shadow: 0 0 20px 5px #4f798511;
+}
+
+nav.navbar .navbar-container {
+    width: 90%;
+    margin: auto;
+    font-family: "A Year Without Rain";
+    font-size: larger;
+}
+
+nav.navbar .navbar-container .navbar-logo {
+    display: block;
+    cursor: pointer;
+}
+
+nav.navbar .navbar-container .user-name {
+    display: block;
+    text-align: right;
+    margin-top: -24px;
+}
+
+main.content {
+    position: relative;
+    top: 100px;
+    width: 80%;
+    margin: auto;
+    padding-bottom: 50px;
+}
+
+main.content .file {
+    display: flex;
+    background: var(--fg-color);
+    width: 100%;
+    height: 50px;
+    align-items: center;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+@media screen and (orientation: landscape) {
+    main.content {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    main.content .file:first-child {
+        margin-right: 10px;
+    }
+
+    main.content .file:not(:first-child) {
+        flex: 1 1 30%;
+        width: 30%;
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
+
+    /* main.content .file:nth-child(3n+3):not(:last-child) {
+        margin: 0 10px;
+    } */
+}
+
+main.content .file:hover {
+    background: var(--fg-color-hover);
+}
+
+main.content .file:not(:last-of-type) {
+    margin-bottom: 10px;
+}
+
+main.content .file .icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    margin: 10px;
+}
+
+main.content .file .icon.file {
+    background: url("../img/file.png") center no-repeat;
+    background-size: contain;
+}
+
+main.content .file .icon.folder {
+    background: url("../img/folder.png") center no-repeat;
+    background-size: contain;
+}
+
+main.content .file .icon.folder-up {
+    background: url("../img/folder-up.png") center no-repeat;
+    background-size: contain;
+}
+
+main.content .file .icon.image {
+    background: url("../img/image.png") center no-repeat;
+    background-size: contain;
+}
+
+main.content .file .icon.video {
+    background: url("../img/video.png") center no-repeat;
+    background-size: contain;
+}
+
+main.content .file .icon.audio {
+    background: url("../img/audio.png") center no-repeat;
+    background-size: contain;
+}
+
+main.content .file .item-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 80%;
+}
+
+.virtualPath {
+    opacity: .5;
+    transition: .3s ease;
+}
+
+.virtualPath:hover {
+    opacity: 1;
+}
+
+.main-content {
+    display: block;
+    width: 100%;
+    height: 80vh;
+    background-color: rgba(0,0,0,.5);
+}
+
+.zr-video-player, .zr-image-viewer {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    margin-top: 30px;
+}
+
+.zr-image-viewer-controls {
+    position: relative;
+    display: flex;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    margin-top: -40px;
+    width: 100%;
+    background: var(--fg-color);
+    opacity: 0;
+    transition: .3s ease;
+    z-index: 27;
+}
+
+.zr-image-viewer:hover + .zr-image-viewer-controls {
+    opacity: 1;
+}
+
+.zr-image-viewer-controls:hover {
+    opacity: 1;
+}
+
+@media screen and (orientation: landscape) {
+    .main-content {
+        display: block;
+        width: 100%;
+        height: 80vh;
+        margin: 30px auto;
+    }
+}
+
+.zr-video-player-controls {
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 80vh;
+    margin-top: -80vh;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.zr-video-player-controls .touch-controller {
+    display: flex;
+    height: calc(80vh - 40px);
+    justify-content: space-around;
+}
+
+.zr-video-player-controls .touch-control {
+    display: flex;
+    width: calc(100% / 3);
+    justify-content: center;
+    opacity: 0;
+    align-items: center;
+}
+
+.zr-video-player-controls .touch-control#toggle {
+    opacity: 1;
+}
+
+.zr-video-player-controls .controller {
+    /* display: flex; */
+    display: inline-flex;
+    width: 100%;
+    height: 40px;
+    background: var(--fg-color);
+    opacity: 0;
+    justify-content: space-around;
+    align-items: center;
+    transition: .5s ease;
+}
+
+#control-toggle {
+    flex-basis: 0%;
+}
+
+#volume {
+    display: none;
+    flex-basis: 0%;
+}
+
+#rangeVolume {
+    width: 100%;
+}
+
+#rangeSeeker {
+    width: 100%;
+}
+
+#seek {
+    flex-basis: 60%;
+}
+
+@media screen and (orientation: landscape) {
+    #volume {
+        display: inline-flex;
+        flex-basis: 20%;
+    }
+
+    #seek {
+        flex-basis: 60%;
+    }
+}
+
+.main-content:hover .zr-video-player-controls .controller {
+    opacity: 1;
+}
+
+.content-detail-table {
+    width: 100%;
+}
+
+.content-detail-table tbody tr td {
+    padding: 10px;
+    vertical-align: top;
+}
+.content-detail-table tbody tr td:nth-child(1) {
+    width: 25vw;
+}
+
+.content-detail-table tbody tr td:nth-child(2) {
+    width: 5px;
+}
+
+.player-icon {
+    width: 25vw;
+    height: auto;
+    aspect-ratio: 1 / 1;
+}
+
+@media screen and (orientation: landscape) {
+    .player-icon {
+        width: 15vw;
+        height: auto;
+        aspect-ratio: 1 / 1;
+    }
+}
+
+.player-icon.play {
+    background: url('../img/play.png');
+    background-size: contain;
+}
+
+.player-icon.pause {
+    background: url('../img/pause.png');
+    background-size: contain;
+}
+
+.player-icon.backward {
+    background: url('../img/bwfw.png');
+    background-size: contain;
+    transform: rotate(180deg);
+}
+
+.player-icon.forward {
+    background: url('../img/bwfw.png');
+    background-size: contain;
+}
+
+.control-icon {
+    height: 30px;
+    width: auto;
+    aspect-ratio: 1 / 1;
+}
+
+.control-icon.play {
+    background: url('../img/play_solid.png') center no-repeat;
+    background-size: contain;
+}
+
+.control-icon.pause {
+    background: url('../img/pause_solid.png') center no-repeat;
+    background-size: contain;
+}
+
+.control-icon.fullscreen {
+    background: url('../img/fullscreen.png') center no-repeat;
+    background-size: contain;
+}
+
+.download-file {
+    width: 80%;
+    background-color: var(--card-color);
+    color: var(--bg-color);
+    padding: 20px 0;
+    text-align: center;
+    margin: 20px auto;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: .3s ease;
+    font-size: x-large;
+}
+
+.download-file:hover {
+    background-color: var(--fg-color-hover);
+    color: var(--text-color);
+}
