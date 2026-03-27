@@ -1,0 +1,5 @@
+# Ignore semua file config.json di semua folder
+config.json
+
+# Ignore semua file .pdb di semua folder
+*.pdb
